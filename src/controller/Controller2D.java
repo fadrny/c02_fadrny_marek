@@ -1,10 +1,7 @@
 package controller;
 
 import helpers.Helpers;
-import model.Line;
-import model.Point;
-import model.Pointable;
-import model.Polygon;
+import model.*;
 import rasterize.LineRasterizerDDA;
 import rasterize.PolygonRasterizer;
 import view.Panel;
@@ -25,6 +22,8 @@ public class Controller2D {
 
     private final ArrayList<Polygon> polygons = new ArrayList<>();
     private Polygon currentPolygon = new Polygon();
+
+    private boolean drawingRectangle = false;
 
     private Point middleClickPoint = null;
     private Pointable draggedPointable = null;
@@ -84,7 +83,7 @@ public class Controller2D {
 
                     case 3: // Right button pressed
 
-                        if(e.isShiftDown())
+                        if(e.isShiftDown() && currentPolygon.getSize() > 0)
                             currentPolygon.pushPoint(Helpers.lockAngle(currentPolygon.getPoint(currentPolygon.getSize()-1), new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()), 45));
                         else
                             currentPolygon.pushPoint(new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
@@ -101,6 +100,11 @@ public class Controller2D {
                     draggedPointIndex = -1;
                     middleClickPoint = null;
                 }
+                else if (e.getButton() == 3 && drawingRectangle && currentPolygon.getSize() == 4){ // Right button released - finish drawing rectangle
+                    drawingRectangle = false;
+                    polygons.add(currentPolygon);
+                    currentPolygon = new Polygon();
+                }
             }
         });
 
@@ -116,7 +120,7 @@ public class Controller2D {
 
                 } else if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK) { // Right button dragged
 
-                    if(e.isShiftDown())
+                    if(e.isShiftDown() && currentPolygon.getSize() > 1)
                         currentPolygon.updateLastPoint(Helpers.lockAngle(currentPolygon.getPoint(currentPolygon.getSize()-2), new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()), 45));
                     else
                         currentPolygon.updateLastPoint(new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
@@ -151,8 +155,12 @@ public class Controller2D {
                     polygons.add(currentPolygon);
                     currentPolygon = new Polygon();
                     drawScene();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
+                } else if (e.getKeyCode() == KeyEvent.VK_R) { // 'R' key pressed to toggle Rectangle drawing
+                    drawingRectangle = !drawingRectangle;
+                    polygons.add(currentPolygon);
+                    currentPolygon = new Rectangle();
+                    drawScene();
+                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
                     controllerColor.switchColor();
 
                     // if left button down, update the current line end point color
