@@ -5,7 +5,7 @@ import java.awt.*;
 public class Point {
 
     public int x, y;
-    private final Color color;
+    private Color color;
 
     public Point(int x, int y, Color color) {
         this.x = x;
@@ -27,5 +27,9 @@ public class Point {
 
     public Color getColor() {
         return color;
+    }
+
+    public void setColor(Color color){
+        this.color = color;
     }
 }

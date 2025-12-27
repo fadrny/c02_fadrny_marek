@@ -34,8 +34,7 @@ public class Polygon implements Pointable {
     public void updateLastPointsColor(Color color) {
         if (points.isEmpty())
             throw new IllegalStateException("No points in the polygon to update.");
-        Point lastPoint = points.getLast();
-        points.set(points.size() - 1, new Point(lastPoint.getX(), lastPoint.getY(), color));
+        getPoint(getSize()-1).setColor(color);
     }
 
     public void editPoint(int index, Point point) {
