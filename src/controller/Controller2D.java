@@ -54,19 +54,20 @@ public class Controller2D {
                     case 1: // Left button pressed
 
                         switch (fillMode) {
-                            case 0:
+                            case 0: // standard line drawing mode
                                 if (currentLine != null)
                                     lines.add(currentLine);
                                 currentLine = new Line(
                                         new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()),
                                         new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
+                                drawScene();
                                 break;
-                            case 1:
+                            case 1: // flood seed fill (fills while its finding same pixels colors as was the startPoint)
                                 FloodSeedFiller floodSeedFiller = new FloodSeedFiller(panel.getRaster());
                                 floodSeedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
                                 panel.repaint();
                                 break;
-                            case 2:
+                            case 2: // border seed fill (checks for the same border color as the selected color)
                                 BorderSeedFiller borderSeedFiller = new BorderSeedFiller(panel.getRaster(),
                                         controllerColor.getCurrentColor());
                                 borderSeedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
@@ -96,6 +97,8 @@ public class Controller2D {
                                 }
                             }
                         }
+
+                        drawScene();
                         break;
 
                     case 3: // Right button pressed
@@ -104,10 +107,10 @@ public class Controller2D {
                             currentPolygon.pushPoint(Helpers.lockAngle(currentPolygon.getPoint(currentPolygon.getSize()-1), new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()), 45));
                         else
                             currentPolygon.pushPoint(new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
+
+                        drawScene();
                         break;
                 }
-
-                // drawScene();
             }
 
             @Override
@@ -179,7 +182,8 @@ public class Controller2D {
                 } else if (e.getKeyCode() == KeyEvent.VK_F) { // 'F' key pressed to toggle Fill mode
                     fillMode = (fillMode + 1) % 3;
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
-                    controllerColor.switchColor();
+
+                    controllerColor.switchColor(e.isShiftDown()); // switch backwards if shift is down
 
                     // if left button down, update the current line end point color
                     if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK && currentLine != null)

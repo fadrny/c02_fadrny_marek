@@ -25,11 +25,8 @@ public class ControllerColor {
         return availableColors[currentColorIndex];
     }
 
-    public void switchColor() {
-        if(currentColorIndex < availableColors.length - 1)
-            currentColorIndex++;
-        else
-            currentColorIndex = 0;
+    public void switchColor(boolean backwards) {
+        currentColorIndex = backwards ? (currentColorIndex - 1 + availableColors.length) % availableColors.length : (currentColorIndex + 1) % availableColors.length;
     }
 
 }
