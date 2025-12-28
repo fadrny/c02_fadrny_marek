@@ -45,14 +45,22 @@ public class LineRasterizerDDA extends LineRasterizer {
         yIncrement = dy / (float) steps;
 
         for (int i = 0; i <= steps; i++) {
-            // Calculate the interpolated color
-            float t = (steps == 0) ? (float) 0 : (float) i / (float) steps;
-            int r = (int)(p1.getColor().getRed() * (1 - t) + p2.getColor().getRed() * t);
-            int g = (int)(p1.getColor().getGreen() * (1 - t) + p2.getColor().getGreen() * t);
-            int b = (int)(p1.getColor().getBlue() * (1 - t) + p2.getColor().getBlue() * t);
-            int color = (r << 16) | (g << 8) | b;
 
-            raster.setPixel(Math.round(x), Math.round(y), color);
+            // if same start and end color, fill and continue
+            if(p1.getColor().getRGB() == p2.getColor().getRGB()){
+                raster.setPixel(Math.round(x), Math.round(y), p1.getColor().getRGB());
+            }
+            else{ // Calculate the interpolated color
+                float t = (steps == 0) ? (float) 0 : (float) i / (float) steps;
+                int a = Math.round(p1.getColor().getAlpha() + (p2.getColor().getAlpha() - p1.getColor().getAlpha()) * t);
+                int r = (int)(p1.getColor().getRed() * (1 - t) + p2.getColor().getRed() * t);
+                int g = (int)(p1.getColor().getGreen() * (1 - t) + p2.getColor().getGreen() * t);
+                int b = (int)(p1.getColor().getBlue() * (1 - t) + p2.getColor().getBlue() * t);
+                int color = (a << 24) | (r << 16) | (g << 8) | b;;
+
+                raster.setPixel(Math.round(x), Math.round(y), color);
+            }
+
             x += xIncrement;
             y += yIncrement;
         }

@@ -208,14 +208,15 @@ public class Controller2D {
     private void drawScene() {
         panel.clear();
 
-        if (currentLine != null)
-            lineRasterizer.rasterize(currentLine);
         if (!lines.isEmpty())
             lineRasterizer.rasterizeIterable(lines);
-        if (currentPolygon != null)
-            polygonRasterizer.rasterize(currentPolygon);
+        if (currentLine != null)
+            lineRasterizer.rasterize(currentLine);
         if (!polygons.isEmpty())
             polygonRasterizer.rasterizeIterable(polygons);
+        if (currentPolygon != null)
+            polygonRasterizer.rasterize(currentPolygon);
+
 
         panel.repaint();
     }
