@@ -4,6 +4,7 @@ import helpers.Helpers;
 import model.*;
 import rasterize.LineRasterizerDDA;
 import rasterize.PolygonRasterizer;
+import rasterize.SeedFiller;
 import view.Panel;
 
 import java.awt.event.KeyEvent;
@@ -29,6 +30,8 @@ public class Controller2D {
     private Pointable draggedPointable = null;
     private int draggedPointIndex = -1;
 
+    private int fillMode = 0;
+
     private final ControllerColor controllerColor = new ControllerColor();
 
     public Controller2D(Panel panel) {
@@ -38,7 +41,6 @@ public class Controller2D {
         setupListeners();
     }
 
-
     /**
      * Sets up the event listeners for user interactions.
      */
@@ -47,15 +49,23 @@ public class Controller2D {
             @Override
             public void mousePressed(MouseEvent e) {
 
-                switch(e.getButton()){
+                switch (e.getButton()) {
                     case 1: // Left button pressed
 
-                        if (currentLine != null)
-                            lines.add(currentLine);
-                        currentLine = new Line(
-                                new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()),
-                                new Point(e.getX(), e.getY(), controllerColor.getCurrentColor())
-                        );
+                        switch (fillMode) {
+                            case 0:
+                                if (currentLine != null)
+                                    lines.add(currentLine);
+                                currentLine = new Line(
+                                        new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()),
+                                        new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
+                                break;
+                            case 1:
+                                SeedFiller seedFiller = new SeedFiller(panel.getRaster());
+                                seedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
+                                panel.repaint();
+                                break;
+                        }
                         break;
 
                     case 2: // Middle button pressed
@@ -90,7 +100,7 @@ public class Controller2D {
                         break;
                 }
 
-                drawScene();
+                // drawScene();
             }
 
             @Override
@@ -150,8 +160,7 @@ public class Controller2D {
                     polygons.clear();
 
                     drawScene();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_P) { // 'P' key pressed to start a new polygon
+                } else if (e.getKeyCode() == KeyEvent.VK_P) { // 'P' key pressed to start a new polygon
                     polygons.add(currentPolygon);
                     currentPolygon = new Polygon();
                     drawScene();
@@ -160,6 +169,8 @@ public class Controller2D {
                     polygons.add(currentPolygon);
                     currentPolygon = new Rectangle();
                     drawScene();
+                } else if (e.getKeyCode() == KeyEvent.VK_F) { // 'F' key pressed to toggle Fill mode
+                    fillMode = (fillMode + 1) % 3;
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
                     controllerColor.switchColor();
 
@@ -186,7 +197,6 @@ public class Controller2D {
             }
         });
     }
-
 
     private void drawScene() {
         panel.clear();
