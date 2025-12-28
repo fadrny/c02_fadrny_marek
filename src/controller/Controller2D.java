@@ -2,9 +2,10 @@ package controller;
 
 import helpers.Helpers;
 import model.*;
+import rasterize.BorderSeedFiller;
 import rasterize.LineRasterizerDDA;
 import rasterize.PolygonRasterizer;
-import rasterize.SeedFiller;
+import rasterize.FloodSeedFiller;
 import view.Panel;
 
 import java.awt.event.KeyEvent;
@@ -61,8 +62,14 @@ public class Controller2D {
                                         new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()));
                                 break;
                             case 1:
-                                SeedFiller seedFiller = new SeedFiller(panel.getRaster());
-                                seedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
+                                FloodSeedFiller floodSeedFiller = new FloodSeedFiller(panel.getRaster());
+                                floodSeedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
+                                panel.repaint();
+                                break;
+                            case 2:
+                                BorderSeedFiller borderSeedFiller = new BorderSeedFiller(panel.getRaster(),
+                                        controllerColor.getCurrentColor());
+                                borderSeedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
                                 panel.repaint();
                                 break;
                         }

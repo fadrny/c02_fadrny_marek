@@ -5,11 +5,11 @@ import model.Point;
 import java.awt.*;
 import java.util.Stack;
 
-public class SeedFiller implements Filler {
+public class FloodSeedFiller implements Filler {
 
     private Raster raster;
 
-    public SeedFiller(Raster raster) {
+    public FloodSeedFiller(Raster raster) {
         this.raster = raster;
     }
 
