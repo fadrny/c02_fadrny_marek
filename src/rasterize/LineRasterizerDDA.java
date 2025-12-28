@@ -56,7 +56,7 @@ public class LineRasterizerDDA extends LineRasterizer {
                 int r = (int)(p1.getColor().getRed() * (1 - t) + p2.getColor().getRed() * t);
                 int g = (int)(p1.getColor().getGreen() * (1 - t) + p2.getColor().getGreen() * t);
                 int b = (int)(p1.getColor().getBlue() * (1 - t) + p2.getColor().getBlue() * t);
-                int color = (a << 24) | (r << 16) | (g << 8) | b;;
+                int color = (a << 24) | (r << 16) | (g << 8) | b;
 
                 raster.setPixel(Math.round(x), Math.round(y), color);
             }
