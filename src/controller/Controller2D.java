@@ -237,23 +237,28 @@ public class Controller2D {
     private void drawScene() {
         panel.clear();
 
-        if(fillMode == 3) { // scan line fill
-            ScanLine scanLine = new ScanLine(panel.getRaster());
-            for (Polygon polygon : polygons) {
-                scanLine.rasterize(polygon, controllerColor.getCurrentColor());
-            }
-            if (currentPolygon != null)
-                scanLine.rasterize(currentPolygon, controllerColor.getCurrentColor());
-        }
-
         if (!lines.isEmpty())
             lineRasterizer.rasterizeIterable(lines);
         if (currentLine != null)
             lineRasterizer.rasterize(currentLine);
-        if (!polygons.isEmpty())
-            polygonRasterizer.rasterizeIterable(polygons);
-        if (currentPolygon != null)
-            polygonRasterizer.rasterize(currentPolygon);
+
+        if(fillMode == 3) { // scan line fill
+            ScanLine scanLine = new ScanLine(panel.getRaster());
+            for (Polygon polygon : polygons) {
+                scanLine.rasterize(polygon, controllerColor.getCurrentColor());
+                polygonRasterizer.rasterize(polygon);
+            }
+            if (currentPolygon != null){
+                scanLine.rasterize(currentPolygon, controllerColor.getCurrentColor());
+                polygonRasterizer.rasterize(currentPolygon);
+            }
+        }
+        else {
+            if (!polygons.isEmpty())
+                polygonRasterizer.rasterizeIterable(polygons);
+            if (currentPolygon != null)
+                polygonRasterizer.rasterize(currentPolygon);
+        }
 
         panel.repaint();
     }
