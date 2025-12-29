@@ -60,7 +60,7 @@ public class Controller2D {
                 break;
         }
         
-        panel.setStatus("Mode: " + modeString + " [F] | Color: ", controllerColor.getCurrentColor(), " [Space] | Clear [C]");
+        panel.setStatus("[LMB] Mode: " + modeString + " [F] | Color: ", controllerColor.getCurrentColor(), " [Space] | Polygon [RMB] | New Polygon [P] | Edit [MMB] | Clear [C]");
     }
 
     /**
