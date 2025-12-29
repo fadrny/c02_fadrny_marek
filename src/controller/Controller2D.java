@@ -59,9 +59,8 @@ public class Controller2D {
                 modeString = "Seed Fill (border)";
                 break;
         }
-
-        String colorString = controllerColor.getCurrentColor().toString();
-        panel.setStatus("Left Click Mode: " + modeString + " [F] | Color: " + colorString + " [Space] | Clear [C]");
+        
+        panel.setStatus("Mode: " + modeString + " [F] | Color: ", controllerColor.getCurrentColor(), " [Space] | Clear [C]");
     }
 
     /**
@@ -244,7 +243,6 @@ public class Controller2D {
             polygonRasterizer.rasterizeIterable(polygons);
         if (currentPolygon != null)
             polygonRasterizer.rasterize(currentPolygon);
-
 
         panel.repaint();
     }

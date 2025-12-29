@@ -11,10 +11,14 @@ import java.util.TimerTask;
 public class Panel extends JPanel {
 
     private RasterBufferedImage raster;
-    private String statusText = "";
+    private String statusTextLeft = "";
+    private String statusTextRight = "";
+    private Color statusColor = null;
 
-    public void setStatus(String text) {
-        this.statusText = text;
+    public void setStatus(String textLeft, Color color, String textRight) {
+        this.statusTextLeft = textLeft;
+        this.statusColor = color;
+        this.statusTextRight = textRight;
         repaint();
     }
 
@@ -36,10 +40,21 @@ public class Panel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         raster.repaint(g);
-        
-        if (!statusText.isEmpty()) {
+
+        if (!statusTextLeft.isEmpty()) {
             g.setColor(Color.WHITE);
-            g.drawString(statusText, 5, 20);
+            g.drawString(statusTextLeft, 5, 20);
+
+            if (statusColor != null) {
+                int offset = 5 + g.getFontMetrics().stringWidth(statusTextLeft);
+                g.setColor(statusColor);
+                g.drawString("▮", offset, 20);
+
+                if (!statusTextRight.isEmpty()) {
+                    g.setColor(Color.WHITE);
+                    g.drawString(statusTextRight, offset + g.getFontMetrics().stringWidth("▮"), 20);
+                }
+            }
         }
         // pro zájemce - co dělá observer - https://stackoverflow.com/a/1684476
     }
