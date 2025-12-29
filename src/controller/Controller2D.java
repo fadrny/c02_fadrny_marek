@@ -2,10 +2,7 @@ package controller;
 
 import helpers.Helpers;
 import model.*;
-import rasterize.BorderSeedFiller;
-import rasterize.LineRasterizerDDA;
-import rasterize.PolygonRasterizer;
-import rasterize.FloodSeedFiller;
+import rasterize.*;
 import view.Panel;
 
 import java.awt.event.KeyEvent;
@@ -58,9 +55,12 @@ public class Controller2D {
             case 2:
                 modeString = "Seed Fill (border)";
                 break;
+            case 3:
+                modeString = "Scan Line";
+                break;
         }
         
-        panel.setStatus("[LMB] Mode: " + modeString + " [F] | Color: ", controllerColor.getCurrentColor(), " [Space] | Polygon [RMB] | New Polygon [P] | Edit [MMB] | Clear [C]");
+        panel.setStatus((fillMode == 3 ? "" : "[LMB] ") + "Mode: " + modeString + " [F] | Color: ", controllerColor.getCurrentColor(), " [Space] | Polygon [RMB] | Rectangle [R] | New Polygon [P] | Edit [MMB] | Clear [C]");
     }
 
     /**
@@ -89,10 +89,11 @@ public class Controller2D {
                                 panel.repaint();
                                 break;
                             case 2: // border seed fill (checks for the same border color as the selected color)
-                                BorderSeedFiller borderSeedFiller = new BorderSeedFiller(panel.getRaster(),
-                                        controllerColor.getCurrentColor());
+                                BorderSeedFiller borderSeedFiller = new BorderSeedFiller(panel.getRaster(),controllerColor.getCurrentColor());
                                 borderSeedFiller.fill(new Point(e.getX(), e.getY()), controllerColor.getCurrentColor());
                                 panel.repaint();
+                                break;
+                            default: // scan line fill
                                 break;
                         }
                         break;
@@ -152,7 +153,7 @@ public class Controller2D {
         panel.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) { // Left button dragged
+                if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK && fillMode == 0) { // Left button dragged
 
                     if(e.isShiftDown())
                         currentLine.setEnd(Helpers.lockAngle(currentLine.getStart(), new Point(e.getX(), e.getY(), controllerColor.getCurrentColor()), 45));
@@ -201,8 +202,9 @@ public class Controller2D {
                     currentPolygon = new Rectangle();
                     drawScene();
                 } else if (e.getKeyCode() == KeyEvent.VK_F) { // 'F' key pressed to toggle Fill mode
-                    fillMode = (fillMode + 1) % 3;
+                    fillMode = (fillMode + 1) % 4;
                     updateStatus();
+                    drawScene();
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
 
                     controllerColor.switchColor(e.isShiftDown()); // switch backwards if shift is down
@@ -243,6 +245,15 @@ public class Controller2D {
             polygonRasterizer.rasterizeIterable(polygons);
         if (currentPolygon != null)
             polygonRasterizer.rasterize(currentPolygon);
+
+        if(fillMode == 3) { // scan line fill
+            ScanLine scanLine = new ScanLine(panel.getRaster());
+            for (Polygon polygon : polygons) {
+                scanLine.rasterize(polygon, controllerColor.getCurrentColor());
+            }
+            if (currentPolygon != null)
+                scanLine.rasterize(currentPolygon, controllerColor.getCurrentColor());
+        }
 
         panel.repaint();
     }
