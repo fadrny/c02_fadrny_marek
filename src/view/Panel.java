@@ -11,6 +11,12 @@ import java.util.TimerTask;
 public class Panel extends JPanel {
 
     private RasterBufferedImage raster;
+    private String statusText = "";
+
+    public void setStatus(String text) {
+        this.statusText = text;
+        repaint();
+    }
 
     public Raster getRaster() {
         return raster;
@@ -30,6 +36,11 @@ public class Panel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         raster.repaint(g);
+        
+        if (!statusText.isEmpty()) {
+            g.setColor(Color.WHITE);
+            g.drawString(statusText, 5, 20);
+        }
         // pro zájemce - co dělá observer - https://stackoverflow.com/a/1684476
     }
 

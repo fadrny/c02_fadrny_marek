@@ -40,6 +40,28 @@ public class Controller2D {
         this.lineRasterizer = new LineRasterizerDDA(panel.getRaster());
         this.polygonRasterizer = new PolygonRasterizer(lineRasterizer);
         setupListeners();
+        updateStatus();
+    }
+
+    /**
+     * Updates the status text on the panel based on current state.
+     */
+    private void updateStatus() {
+        String modeString = "";
+        switch (fillMode) {
+            case 0:
+                modeString = "Lines";
+                break;
+            case 1:
+                modeString = "Seed Fill (background)";
+                break;
+            case 2:
+                modeString = "Seed Fill (border)";
+                break;
+        }
+
+        String colorString = controllerColor.getCurrentColor().toString();
+        panel.setStatus("Left Click Mode: " + modeString + " [F] | Color: " + colorString + " [Space] | Clear [C]");
     }
 
     /**
@@ -181,9 +203,11 @@ public class Controller2D {
                     drawScene();
                 } else if (e.getKeyCode() == KeyEvent.VK_F) { // 'F' key pressed to toggle Fill mode
                     fillMode = (fillMode + 1) % 3;
+                    updateStatus();
                 } else if (e.getKeyCode() == KeyEvent.VK_SPACE) { // Space key pressed to change color
 
                     controllerColor.switchColor(e.isShiftDown()); // switch backwards if shift is down
+                    updateStatus();
 
                     // if left button down, update the current line end point color
                     if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK && currentLine != null)
