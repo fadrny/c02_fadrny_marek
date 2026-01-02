@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class Controller2D {
 
+    //region State
     private final Panel panel;
     private final LineRasterizerDDA lineRasterizer;
     private final PolygonRasterizer polygonRasterizer;
@@ -40,6 +41,8 @@ public class Controller2D {
     private int clippingEditTarget = 0;
 
     private final ControllerColor controllerColor = new ControllerColor();
+    //endregion
+
 
     public Controller2D(Panel panel) {
         this.panel = panel;
@@ -54,6 +57,9 @@ public class Controller2D {
         updateStatus();
     }
 
+    /**
+     * Creates the default clipper polygon (octagon in the center of the panel).
+     */
     private void initDefaultClipper() {
         clipPolygon = new Polygon();
         int centerX = 400;
@@ -67,10 +73,15 @@ public class Controller2D {
         }
     }
 
+    /**
+     * Updates the status bar at the left top of the window.
+     */
     private void updateStatus() {
         String modeString = "";
-        if (clippingMode)
-            panel.setStatus("Clipping Mode (Target: " + (clippingEditTarget == 0 ? "Subject" : "Clipper") + ") - [MMB] Edit Point | [RMB] Add Point | [1/2] Target | [K] Exit Clipping mode | [C] Clear Target", null, "");
+        if (clippingMode) {
+            String targetString = (clippingEditTarget == 0) ? "Subject" : "Clipper";
+            panel.setStatus("Clipping Mode (Target: " + targetString  + ") - [MMB] Edit Point | [RMB] Add Point | [1/2] Target | [K] Exit Clipping mode | [C] Clear " + targetString, null, "");
+        }
         else {
             switch (fillMode) {
                 case 0: modeString = "Lines"; break;
@@ -91,7 +102,7 @@ public class Controller2D {
             public void mousePressed(MouseEvent e) {
 
                 switch (e.getButton()) {
-                    case 1: // Left button pressed
+                    case 1: // Left button pressed (drawing lines or using fill mode)
                         if (clippingMode) // Disabled in clipping mode
                             return;
 
@@ -120,7 +131,7 @@ public class Controller2D {
                         }
                         break;
 
-                    case 2: // Middle button pressed
+                    case 2: // Middle button pressed (moving points)
                         middleClickPoint = new Point(e.getX(), e.getY());
 
                         double minDistance = Double.MAX_VALUE;
@@ -154,7 +165,7 @@ public class Controller2D {
                         drawScene();
                         break;
 
-                    case 3: // Right button pressed
+                    case 3: // Right button pressed (adding points to polygons)
 
                         if (clippingMode) {
                             Polygon target = (clippingEditTarget == 1) ? clipPolygon : subjectPolygon;
@@ -231,8 +242,10 @@ public class Controller2D {
                     clippingMode = !clippingMode;
                     if (clippingMode) {
                         // Ensure defaults
-                        if (clipPolygon == null || clipPolygon.getSize() < 3) initDefaultClipper();
-                        if (subjectPolygon == null) subjectPolygon = new Polygon();
+                        if (clipPolygon == null || clipPolygon.getSize() < 3)
+                            initDefaultClipper();
+                        if (subjectPolygon == null)
+                            subjectPolygon = new Polygon();
                     }
                     updateStatus();
                     drawScene();
@@ -244,28 +257,30 @@ public class Controller2D {
                         clippingEditTarget = 1; // Clipper
                         updateStatus();
                     } else if (e.getKeyCode() == KeyEvent.VK_C) {
-                        if (clippingEditTarget == 0) subjectPolygon = new Polygon();
-                        else initDefaultClipper();
+                        if (clippingEditTarget == 0) // Clear Subject
+                            subjectPolygon = new Polygon();
+                        else // Clear Clipper
+                            initDefaultClipper();
                         drawScene();
                     }
                 } else {
                     // Standard Mode Keys
-                    if (e.getKeyCode() == KeyEvent.VK_C) {
+                    if (e.getKeyCode() == KeyEvent.VK_C) { // Clear
                         lines.clear();
                         currentLine = null;
                         currentPolygon = new Polygon();
                         polygons.clear();
                         drawScene();
-                    } else if (e.getKeyCode() == KeyEvent.VK_P) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_P) { // New Polygon
                         polygons.add(currentPolygon);
                         currentPolygon = new Polygon();
                         drawScene();
-                    } else if (e.getKeyCode() == KeyEvent.VK_R) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_R) { // New Rectangle
                         drawingRectangle = !drawingRectangle;
                         polygons.add(currentPolygon);
                         currentPolygon = new Rectangle();
                         drawScene();
-                    } else if (e.getKeyCode() == KeyEvent.VK_F) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_F) { // Change Fill Mode
                         fillMode = (fillMode + 1) % 4; // Cycle through 0, 1, 2, 3
                         updateStatus();
                         drawScene();
@@ -297,6 +312,10 @@ public class Controller2D {
         });
     }
 
+
+    /**
+     * Draws the entire scene based on the current state.
+     */
     private void drawScene() {
         panel.clear();
 
