@@ -35,11 +35,14 @@ public class Line implements Pointable {
     }
 
     public Point getPoint(int index){
-        return switch (index) {
-            case 0 -> p1;
-            case 1 -> p2;
-            default -> throw new IndexOutOfBoundsException("Index out of bounds: " + index);
-        };
+        switch (index) {
+            case 0:
+                return p1;
+            case 1:
+                return p2;
+            default:
+                throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+        }
     }
 
     public void editPoint(int index, Point point){

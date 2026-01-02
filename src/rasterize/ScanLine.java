@@ -56,7 +56,7 @@ public class ScanLine {
         edges.sort(Comparator.comparingInt(Edge::getMinY));
 
         // Determine y range
-        int yMin = edges.getFirst().getMinY();
+        int yMin = edges.get(0).getMinY();
         int yMax = 0;
         for (Edge e : edges) {
             if (e.getMaxY() > yMax) yMax = e.getMaxY();

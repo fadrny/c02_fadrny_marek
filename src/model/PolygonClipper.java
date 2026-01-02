@@ -28,7 +28,7 @@ public class PolygonClipper {
             if (input.isEmpty())
                 break;
 
-            Point S = input.getLast();
+            Point S = input.get(input.size() - 1);
 
             for (Point E : input) {
                 if (isInside(E, p1, p2, isClipperCW)) {

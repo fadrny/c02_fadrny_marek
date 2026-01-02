@@ -1,7 +1,9 @@
 import controller.Controller2D;
 import view.Window;
 
-void main() {
-    Window window = new Window();
-    new Controller2D(window.getPanel());
+public class Main {
+    public static void main(String[] args) {
+        Window window = new Window();
+        new Controller2D(window.getPanel());
+    }
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="c02_fadrny_marek:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/c02_fadrny_marek_jar</output-path>
+    <root id="archive" name="c02_fadrny_marek.jar">
+      <element id="module-output" name="c02_fadrny_marek" />
+    </root>
+  </artifact>
+</component>
