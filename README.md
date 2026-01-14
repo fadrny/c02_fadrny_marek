@@ -94,7 +94,7 @@ Pokud chcete projekt sestavit sami, postupujte podle následujících kroků:
 
 ---
 
-## Hodnocení (Grading Table) viz [src/PozadavkyPGRF1_Task2_2025.docx](src/PozadavkyPGRF1_Task2_2025.docx)
+## Hodnocení (Grading Table) viz [PozadavkyPGRF1_Task2_2025.docx](/PozadavkyPGRF1_Task2_2025.docx)
 
 | Požadavky | Splněno (%) | Řešení ovládání | Komentáře k řešení |
 | :--- | :---: | :--- | :--- |
